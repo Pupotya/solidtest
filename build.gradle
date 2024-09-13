@@ -1,0 +1,58 @@
+plugins {
+    id 'io.qameta.allure-adapter' version '2.12.0'
+    id 'java'
+}
+
+group = 'org.solid'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+allure {
+    adapter {
+        allureJavaVersion.set("2.29.0")
+        aspectjVersion.set("1.9.22.1")
+
+        autoconfigure.set(true)
+        autoconfigureListeners.set(true)
+        aspectjWeaver.set(true)
+    }
+}
+
+dependencies {
+    implementation 'com.google.code.gson:gson:2.11.0'
+    implementation 'com.codeborne:selenide:7.5.0'
+    implementation 'org.testng:testng:7.10.2'
+    implementation 'io.rest-assured:rest-assured:5.4.0'
+    implementation 'org.aeonbits.owner:owner-java8:1.0.12'
+    implementation 'org.assertj:assertj-core:3.26.3'
+
+    implementation 'org.apache.logging.log4j:log4j-api:2.24.0'
+    implementation 'org.apache.logging.log4j:log4j-core:2.24.0'
+    implementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.24.0'
+
+    implementation 'io.qameta.allure:allure-testng:2.29.0'
+    implementation 'io.qameta.allure:allure-assertj:2.29.0'
+    implementation 'io.qameta.allure:allure-rest-assured:2.29.0'
+}
+
+test {
+    systemProperty 'public.key', System.getProperty('publicKey')
+    systemProperty 'secret.key', System.getProperty('secretKey')
+
+    systemProperty 'selenide.timeout', '10000'
+//    jvmArgs = [ "-javaagent:${configurations.agent.singleFile}" ]
+    systemProperty 'log4j2.configurationFile', 'file:src/main/resources/log4j2.xml'
+    useTestNG() {
+        useDefaultListeners = true
+        suites 'src/test/resources/suites/payments.xml'
+    }
+    testLogging {
+        events "passed", "skipped", "failed"
+        showStandardStreams = true
+    }
+}
+
+
